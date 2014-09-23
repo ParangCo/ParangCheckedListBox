@@ -23,7 +23,7 @@ public class CheckedListBox extends LinearLayout {
 	boolean showSelectAll;
 	int startIndex;
 	boolean compactMode = false;
-	
+
 	public CheckedListBox(Context context, AttributeSet attr) {
 		super(context, attr);
 		initialize(context);
@@ -56,25 +56,28 @@ public class CheckedListBox extends LinearLayout {
 		containerLinearLayout = (LinearLayout) findViewById(R.id.containerLinearLayout);
 
 		titleTextView.setOnClickListener(new OnClickListener() {
-			
+
 			@Override
 			public void onClick(View arg0) {
-				if(!isCompactMode())
+				if (!isCompactMode())
 					return;
-				
-				if(containerLinearLayout.getVisibility() == View.GONE)
+
+				if (containerLinearLayout.getVisibility() == View.GONE)
 					containerLinearLayout.setVisibility(View.VISIBLE);
 				else
 					containerLinearLayout.setVisibility(View.GONE);
 			}
 		});
-		
+
 		startIndex = 0;
 
 		refreshList();
 	}
 
 	private void refreshList() {
+		if (!isCompactMode())
+			containerLinearLayout.setVisibility(View.VISIBLE);
+
 		if (listItems == null) {
 			checkBoxes = null;
 			containerLinearLayout.removeAllViews();
@@ -170,7 +173,7 @@ public class CheckedListBox extends LinearLayout {
 			titleTextView.setVisibility(VISIBLE);
 		} else {
 			titleTextView.setText(context.getString(R.string.TapHere));
-			if(!isCompactMode())
+			if (!isCompactMode())
 				titleTextView.setVisibility(GONE);
 		}
 	}
@@ -209,8 +212,9 @@ public class CheckedListBox extends LinearLayout {
 			return -1;
 
 		for (int i = 0; i < listItems.length; i++) {
-			if (listItems[i].getValue() == value)
+			if (listItems[i].getValue().equals(value)) {
 				return i;
+			}
 		}
 		return -1;
 	}
@@ -241,7 +245,7 @@ public class CheckedListBox extends LinearLayout {
 			return;
 
 		int position = getItemPosition(value);
-		if (position > 0)
+		if (position >= 0)
 			setCheckedAt(position, checked);
 	}
 
@@ -257,7 +261,7 @@ public class CheckedListBox extends LinearLayout {
 			return false;
 
 		int position = getItemPosition(value);
-		if (position > 0)
+		if (position >= 0)
 			return getCheckedAt(position);
 		return false;
 	}
@@ -272,7 +276,7 @@ public class CheckedListBox extends LinearLayout {
 
 		return selections.toArray(new Integer[selections.size()]);
 	}
-	
+
 	public Object[] getCheckedValues() {
 		List<Object> selections = new ArrayList<Object>();
 
@@ -283,17 +287,17 @@ public class CheckedListBox extends LinearLayout {
 
 		return selections.toArray();
 	}
-	
-	public int getCheckedCount(){
+
+	public int getCheckedCount() {
 		int checked = 0;
-		
+
 		for (int i = startIndex; i < checkBoxes.length; i++) {
 			if (checkBoxes[i].isChecked())
 				checked++;
 		}
 		return checked;
 	}
-	
+
 	public boolean isCompactMode() {
 		return compactMode;
 	}
@@ -308,14 +312,13 @@ public class CheckedListBox extends LinearLayout {
 	}
 
 	public void setListOpened(boolean listOpened) {
-		if(!isCompactMode())
+		if (!isCompactMode())
 			return;
-		
-		if(listOpened)
+
+		if (listOpened)
 			containerLinearLayout.setVisibility(View.VISIBLE);
 		else
 			containerLinearLayout.setVisibility(View.GONE);
 	}
-	
-	
+
 }
