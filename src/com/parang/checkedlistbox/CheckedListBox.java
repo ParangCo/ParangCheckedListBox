@@ -2,9 +2,9 @@ package com.parang.checkedlistbox;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.content.Context;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +13,24 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 public class CheckedListBox extends LinearLayout {
-	Context context;
-	CheckedListBoxItem[] listItems;
-	CheckBox[] checkBoxes;
-	LinearLayout containerLinearLayout;
-	TextView titleTextView;
-	Typeface typeFace = null;
-	String title = null;
-	boolean showSelectAll;
-	int startIndex;
-	boolean compactMode = false;
+	private Context context;
+	private CheckedListBoxItem[] listItems;
+	private CheckBox[] checkBoxes;
+	private LinearLayout containerLinearLayout;
+	private TextView titleTextView;
+	private Typeface typeFace = null;
+	private String title = null;
+	private boolean showSelectAll;
+	private int startIndex;
+	private boolean compactMode = false;
+	private int checkBoxWidth = LayoutParams.MATCH_PARENT, checkBoxHeight = LayoutParams.WRAP_CONTENT, checkBoxMarginLeft = 0, checkBoxMarginTop = 0, checkBoxMarginRight = 0, checkBoxMarginBottom = 0;
+	private int dividerWidth = LayoutParams.MATCH_PARENT, dividerHeight = LayoutParams.WRAP_CONTENT, dividerMarginLeft = 0, dividerMarginTop = 0, dividerMarginRight = 0, dividerMarginBottom = 0;
+	private int titleDividerWidth = LayoutParams.MATCH_PARENT, titleDividerHeight = LayoutParams.WRAP_CONTENT, titleDividerMarginLeft = 0, titleDividerMarginTop = 0, titleDividerMarginRight = 0, titleDividerMarginBottom = 0;
+	private int titleWidth = LayoutParams.MATCH_PARENT, titleHeight = LayoutParams.WRAP_CONTENT, titleMarginLeft = 0, titleMarginTop = 0, titleMarginRight = 0, titleMarginBottom = 0;
+	private Drawable checkBoxBackgroundDrawable = null, dividerBackgroundDrawable = null, titleDividerBackgroundDrawable = null, titleBackgroundDrawable = null;
+	private LinearLayout.LayoutParams checkBoxLayoutParams, dividerLayoutParams, titleDividerLayoutParams, titleLayoutParams;
+	private int titleTextColor;
+	private View titleDividerView;
 
 	public CheckedListBox(Context context, AttributeSet attr) {
 		super(context, attr);
@@ -52,9 +60,25 @@ public class CheckedListBox extends LinearLayout {
 
 		this.context = context;
 
+		checkBoxLayoutParams = new LayoutParams(checkBoxWidth, checkBoxHeight);
+		checkBoxLayoutParams.setMargins(checkBoxMarginLeft, checkBoxMarginTop, checkBoxMarginRight, checkBoxMarginBottom);
+
+		dividerLayoutParams = new LayoutParams(dividerWidth, dividerHeight);
+		dividerLayoutParams.setMargins(dividerMarginLeft, dividerMarginTop, dividerMarginRight, dividerMarginBottom);
+		
+		titleLayoutParams = new LayoutParams(titleWidth, titleHeight);
+		titleLayoutParams.setMargins(titleMarginLeft, titleMarginTop, titleMarginRight, titleMarginBottom);
+		
+		titleDividerLayoutParams = new LayoutParams(titleDividerWidth, titleDividerHeight);
+		titleDividerLayoutParams.setMargins(titleDividerMarginLeft, titleDividerMarginTop, titleDividerMarginRight, titleDividerMarginBottom);
+		
 		titleTextView = (TextView) findViewById(R.id.titleTextView);
 		containerLinearLayout = (LinearLayout) findViewById(R.id.containerLinearLayout);
+		titleDividerView = findViewById(R.id.titleDividerView);
 
+		titleDividerView.setLayoutParams(titleDividerLayoutParams);
+		titleTextView.setLayoutParams(titleLayoutParams);
+		
 		titleTextView.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -74,7 +98,11 @@ public class CheckedListBox extends LinearLayout {
 		refreshList();
 	}
 
+	@SuppressWarnings("deprecation")
 	private void refreshList() {
+		Object[] selectedValues = getCheckedValues();
+		View divider;
+
 		if (!isCompactMode())
 			containerLinearLayout.setVisibility(View.VISIBLE);
 
@@ -98,7 +126,9 @@ public class CheckedListBox extends LinearLayout {
 				checkBoxes[0] = new CheckBox(context);
 				checkBoxes[0].setText(context.getString(R.string.All));
 				checkBoxes[0].setTag(null);
-				checkBoxes[0].setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+				checkBoxes[0].setLayoutParams(checkBoxLayoutParams);
+				checkBoxes[0].setBackgroundDrawable(checkBoxBackgroundDrawable);
+
 				if (typeFace != null)
 					checkBoxes[0].setTypeface(typeFace);
 
@@ -111,6 +141,13 @@ public class CheckedListBox extends LinearLayout {
 				});
 
 				containerLinearLayout.addView(checkBoxes[0]);
+
+				if (dividerBackgroundDrawable != null) {
+					divider = new View(context);
+					divider.setLayoutParams(dividerLayoutParams);
+					divider.setBackgroundDrawable(dividerBackgroundDrawable);
+					containerLinearLayout.addView(divider);
+				}
 			}
 
 			for (int i = 0; i < listItems.length; i++) {
@@ -118,7 +155,9 @@ public class CheckedListBox extends LinearLayout {
 				checkBoxes[startIndex + i].setId(i);
 				checkBoxes[startIndex + i].setText(listItems[i].getText());
 				checkBoxes[startIndex + i].setTag(listItems[i].getValue());
-				checkBoxes[startIndex + i].setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+				checkBoxes[startIndex + i].setLayoutParams(checkBoxLayoutParams);
+				checkBoxes[startIndex + i].setBackgroundDrawable(checkBoxBackgroundDrawable);
+
 				if (typeFace != null)
 					checkBoxes[startIndex + i].setTypeface(typeFace);
 
@@ -132,6 +171,17 @@ public class CheckedListBox extends LinearLayout {
 				});
 
 				containerLinearLayout.addView(checkBoxes[startIndex + i]);
+
+				if (dividerBackgroundDrawable != null) {
+					divider = new View(context);
+					divider.setLayoutParams(dividerLayoutParams);
+					divider.setBackgroundDrawable(dividerBackgroundDrawable);
+					containerLinearLayout.addView(divider);
+				}
+			}
+
+			for (int i = 0; i < selectedValues.length; i++) {
+				setChecked(selectedValues[i], true);
 			}
 		}
 	}
@@ -267,6 +317,9 @@ public class CheckedListBox extends LinearLayout {
 	}
 
 	public Integer[] getCheckedPositions() {
+		if (checkBoxes == null)
+			return new Integer[0];
+
 		List<Integer> selections = new ArrayList<Integer>();
 
 		for (int i = startIndex; i < checkBoxes.length; i++) {
@@ -278,6 +331,9 @@ public class CheckedListBox extends LinearLayout {
 	}
 
 	public Object[] getCheckedValues() {
+		if (checkBoxes == null)
+			return new Object[0];
+
 		List<Object> selections = new ArrayList<Object>();
 
 		for (int i = startIndex; i < checkBoxes.length; i++) {
@@ -304,6 +360,10 @@ public class CheckedListBox extends LinearLayout {
 
 	public void setCompactMode(boolean compactMode) {
 		this.compactMode = compactMode;
+		if (isCompactMode())
+			containerLinearLayout.setVisibility(View.GONE);
+		else
+			containerLinearLayout.setVisibility(View.VISIBLE);
 		setTitle(title);
 	}
 
@@ -321,4 +381,130 @@ public class CheckedListBox extends LinearLayout {
 			containerLinearLayout.setVisibility(View.GONE);
 	}
 
+	public void setCheckBoxSize(int width, int height) {
+		checkBoxWidth = width;
+		checkBoxHeight = height;
+
+		checkBoxLayoutParams = new LayoutParams(checkBoxWidth, checkBoxHeight);
+		checkBoxLayoutParams.setMargins(checkBoxMarginLeft, checkBoxMarginTop, checkBoxMarginRight, checkBoxMarginBottom);
+
+		refreshList();
+	}
+
+	public void setCheckBoxBackground(Drawable background) {
+		checkBoxBackgroundDrawable = background;
+
+		refreshList();
+	}
+
+	public void setCheckBoxMargins(int left, int right, int top, int bottom) {
+		checkBoxMarginLeft = left;
+		checkBoxMarginTop = top;
+		checkBoxMarginRight = right;
+		checkBoxMarginBottom = bottom;
+
+		checkBoxLayoutParams = new LayoutParams(checkBoxWidth, checkBoxHeight);
+		checkBoxLayoutParams.setMargins(checkBoxMarginLeft, checkBoxMarginTop, checkBoxMarginRight, checkBoxMarginBottom);
+
+		refreshList();
+	}
+
+	public void setDividerSize(int width, int height) {
+		dividerWidth = width;
+		dividerHeight = height;
+
+		dividerLayoutParams = new LayoutParams(dividerWidth, dividerHeight);
+		dividerLayoutParams.setMargins(dividerMarginLeft, dividerMarginTop, dividerMarginRight, dividerMarginBottom);
+
+		refreshList();
+	}
+
+	public void setDividerBackground(Drawable background) {
+		dividerBackgroundDrawable = background;
+
+		refreshList();
+	}
+
+	public void setDividerMargins(int left, int right, int top, int bottom) {
+		dividerMarginLeft = left;
+		dividerMarginTop = top;
+		dividerMarginRight = right;
+		dividerMarginBottom = bottom;
+
+		dividerLayoutParams = new LayoutParams(dividerWidth, dividerHeight);
+		dividerLayoutParams.setMargins(dividerMarginLeft, dividerMarginTop, dividerMarginRight, dividerMarginBottom);
+
+		refreshList();
+	}
+
+	public int getTitleTextColor() {
+		return titleTextColor;
+	}
+
+	public void setTitleTextColor(int titleTextColor) {
+		this.titleTextColor = titleTextColor;
+		titleTextView.setTextColor(titleTextColor);
+	}
+
+	@SuppressWarnings("deprecation")
+	public void setTitleBackground(Drawable background) {
+		titleBackgroundDrawable = background;
+		titleTextView.setBackgroundDrawable(titleBackgroundDrawable);
+	}
+
+	public void setTitleSize(int width, int height) {
+		titleWidth = width;
+		titleHeight = height;
+
+		titleLayoutParams = new LayoutParams(titleWidth, titleHeight);
+		titleLayoutParams.setMargins(titleMarginLeft, titleMarginTop, titleMarginRight, titleMarginBottom);
+
+		titleTextView.setLayoutParams(titleLayoutParams);
+	}
+
+	public void setTitleMargins(int left, int right, int top, int bottom) {
+		titleMarginLeft = left;
+		titleMarginTop = top;
+		titleMarginRight = right;
+		titleMarginBottom = bottom;
+
+		titleLayoutParams = new LayoutParams(titleWidth, titleHeight);
+		titleLayoutParams.setMargins(titleMarginLeft, titleMarginTop, titleMarginRight, titleMarginBottom);
+
+		titleTextView.setLayoutParams(titleLayoutParams);
+	}
+	
+	public void setTitleDividerSize(int width, int height) {
+		titleDividerWidth = width;
+		titleDividerHeight = height;
+
+		titleDividerLayoutParams = new LayoutParams(titleDividerWidth, titleDividerHeight);
+		titleDividerLayoutParams.setMargins(titleDividerMarginLeft, titleDividerMarginTop, titleDividerMarginRight, titleDividerMarginBottom);
+
+		titleDividerView.setLayoutParams(titleDividerLayoutParams);
+	}
+
+	public void setTitleDividerMargins(int left, int right, int top, int bottom) {
+		titleDividerMarginLeft = left;
+		titleDividerMarginTop = top;
+		titleDividerMarginRight = right;
+		titleDividerMarginBottom = bottom;
+
+		titleDividerLayoutParams = new LayoutParams(titleDividerWidth, titleDividerHeight);
+		titleDividerLayoutParams.setMargins(titleDividerMarginLeft, titleDividerMarginTop, titleDividerMarginRight, titleDividerMarginBottom);
+
+		titleDividerView.setLayoutParams(titleDividerLayoutParams);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void setTitleDividerBackground(Drawable background) {
+		titleDividerBackgroundDrawable = background;
+		titleDividerView.setBackgroundDrawable(titleDividerBackgroundDrawable);
+
+		if (background == null) {
+			titleDividerView.setVisibility(View.GONE);
+		} else {
+			titleDividerView.setVisibility(View.VISIBLE);
+		}
+	}
 }
