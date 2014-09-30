@@ -28,7 +28,7 @@ public class CheckedListBox extends LinearLayout {
 	private int dividerWidth = LayoutParams.MATCH_PARENT, dividerHeight = LayoutParams.WRAP_CONTENT, dividerMarginLeft = 0, dividerMarginTop = 0, dividerMarginRight = 0, dividerMarginBottom = 0;
 	private int titleDividerWidth = LayoutParams.MATCH_PARENT, titleDividerHeight = LayoutParams.WRAP_CONTENT, titleDividerMarginLeft = 0, titleDividerMarginTop = 0, titleDividerMarginRight = 0, titleDividerMarginBottom = 0;
 	private int titleWidth = LayoutParams.MATCH_PARENT, titleHeight = LayoutParams.WRAP_CONTENT, titleMarginLeft = 0, titleMarginTop = 0, titleMarginRight = 0, titleMarginBottom = 0;
-	private Drawable checkBoxBackgroundDrawable = null, dividerBackgroundDrawable = null, titleDividerBackgroundDrawable = null, titleBackgroundDrawable = null;
+	private Drawable checkBoxBackgroundDrawable = null, dividerBackgroundDrawable = null, titleDividerBackgroundDrawable = null, titleBackgroundDrawable = null, expandDrawable, collapseDrawable, iconDrawable;
 	private LinearLayout.LayoutParams checkBoxLayoutParams, dividerLayoutParams, titleDividerLayoutParams, titleLayoutParams, textViewLayoutParams;
 	private int titleTextColor;
 	private View titleDividerView;
@@ -100,6 +100,27 @@ public class CheckedListBox extends LinearLayout {
 					containerLinearLayout.setVisibility(View.VISIBLE);
 				else
 					containerLinearLayout.setVisibility(View.GONE);
+				
+				if(isCompactMode()){
+					if(containerLinearLayout.getVisibility() == View.VISIBLE){
+						if(direction == 0)
+							titleTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, collapseDrawable, null);
+						else
+							titleTextView.setCompoundDrawablesWithIntrinsicBounds(collapseDrawable, null, iconDrawable, null);
+					}
+					else{
+						if(direction == 0)
+							titleTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, expandDrawable, null);
+						else
+							titleTextView.setCompoundDrawablesWithIntrinsicBounds(expandDrawable, null, iconDrawable, null);
+					}
+				}
+				else{
+					if(direction == 0)
+						titleTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, null, null);
+					else
+						titleTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, iconDrawable, null);
+				}
 			}
 		});
 
@@ -116,6 +137,27 @@ public class CheckedListBox extends LinearLayout {
 		if (!isCompactMode())
 			containerLinearLayout.setVisibility(View.VISIBLE);
 
+		if(isCompactMode()){
+			if(containerLinearLayout.getVisibility() == View.VISIBLE){
+				if(direction == 0)
+					titleTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, collapseDrawable, null);
+				else
+					titleTextView.setCompoundDrawablesWithIntrinsicBounds(collapseDrawable, null, iconDrawable, null);
+			}
+			else{
+				if(direction == 0)
+					titleTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, expandDrawable, null);
+				else
+					titleTextView.setCompoundDrawablesWithIntrinsicBounds(expandDrawable, null, iconDrawable, null);
+			}
+		}
+		else{
+			if(direction == 0)
+				titleTextView.setCompoundDrawablesWithIntrinsicBounds(iconDrawable, null, null, null);
+			else
+				titleTextView.setCompoundDrawablesWithIntrinsicBounds(null, null, iconDrawable, null);
+		}
+		
 		if (listItems == null) {
 			checkBoxes = null;
 			containerLinearLayout.removeAllViews();
@@ -577,5 +619,29 @@ public class CheckedListBox extends LinearLayout {
 		} else {
 			titleDividerView.setVisibility(View.VISIBLE);
 		}
+	}
+
+	public Drawable getExpandDrawable() {
+		return expandDrawable;
+	}
+
+	public void setExpandDrawable(Drawable expandDrawable) {
+		this.expandDrawable = expandDrawable;
+	}
+
+	public Drawable getCollapseDrawable() {
+		return collapseDrawable;
+	}
+
+	public void setCollapseDrawable(Drawable collapseDrawable) {
+		this.collapseDrawable = collapseDrawable;
+	}
+
+	public Drawable getIconDrawable() {
+		return iconDrawable;
+	}
+
+	public void setIconDrawable(Drawable iconDrawable) {
+		this.iconDrawable = iconDrawable;
 	}
 }
