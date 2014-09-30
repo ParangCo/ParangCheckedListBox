@@ -2,4 +2,5 @@
 <resources>
     <string name="All">همه</string>
     <string name="TapHere">اینجا را لمس کنید</string>
+    <string name="Direction">rtl</string>
 </resources>

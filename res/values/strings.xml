@@ -3,4 +3,5 @@
     <string name="app_name">ParangCheckedListBox</string>
     <string name="All">All</string>
     <string name="TapHere">Tap here</string>
+    <string name="Direction">ltr</string>
 </resources>

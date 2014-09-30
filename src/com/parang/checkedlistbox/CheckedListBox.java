@@ -6,6 +6,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -28,10 +29,11 @@ public class CheckedListBox extends LinearLayout {
 	private int titleDividerWidth = LayoutParams.MATCH_PARENT, titleDividerHeight = LayoutParams.WRAP_CONTENT, titleDividerMarginLeft = 0, titleDividerMarginTop = 0, titleDividerMarginRight = 0, titleDividerMarginBottom = 0;
 	private int titleWidth = LayoutParams.MATCH_PARENT, titleHeight = LayoutParams.WRAP_CONTENT, titleMarginLeft = 0, titleMarginTop = 0, titleMarginRight = 0, titleMarginBottom = 0;
 	private Drawable checkBoxBackgroundDrawable = null, dividerBackgroundDrawable = null, titleDividerBackgroundDrawable = null, titleBackgroundDrawable = null;
-	private LinearLayout.LayoutParams checkBoxLayoutParams, dividerLayoutParams, titleDividerLayoutParams, titleLayoutParams;
+	private LinearLayout.LayoutParams checkBoxLayoutParams, dividerLayoutParams, titleDividerLayoutParams, titleLayoutParams, textViewLayoutParams;
 	private int titleTextColor;
 	private View titleDividerView;
-
+	private int direction;
+	
 	public CheckedListBox(Context context, AttributeSet attr) {
 		super(context, attr);
 		initialize(context);
@@ -60,6 +62,14 @@ public class CheckedListBox extends LinearLayout {
 
 		this.context = context;
 
+		String directionString = context.getString(R.string.Direction);
+		if(directionString.equals("rtl"))
+			direction = 1;
+		else
+			direction = 0;
+		
+		textViewLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f);
+		
 		checkBoxLayoutParams = new LayoutParams(checkBoxWidth, checkBoxHeight);
 		checkBoxLayoutParams.setMargins(checkBoxMarginLeft, checkBoxMarginTop, checkBoxMarginRight, checkBoxMarginBottom);
 
@@ -123,14 +133,23 @@ public class CheckedListBox extends LinearLayout {
 			checkBoxes = new CheckBox[length];
 
 			if (showSelectAll) {
+				LinearLayout checkBoxLinearLayout = new LinearLayout(context);
+				checkBoxLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+				checkBoxLinearLayout.setLayoutParams(checkBoxLayoutParams);
+				
+				TextView checkBoxTextView = new TextView(context);
+				checkBoxTextView.setText(context.getString(R.string.All));
+				checkBoxTextView.setLayoutParams(textViewLayoutParams);
+				
 				checkBoxes[0] = new CheckBox(context);
-				checkBoxes[0].setText(context.getString(R.string.All));
+				checkBoxes[0].setText("");
 				checkBoxes[0].setTag(null);
-				checkBoxes[0].setLayoutParams(checkBoxLayoutParams);
 				checkBoxes[0].setBackgroundDrawable(checkBoxBackgroundDrawable);
 
-				if (typeFace != null)
+				if (typeFace != null){
 					checkBoxes[0].setTypeface(typeFace);
+					checkBoxTextView.setTypeface(typeFace);
+				}
 
 				checkBoxes[0].setOnClickListener(new OnClickListener() {
 
@@ -140,7 +159,28 @@ public class CheckedListBox extends LinearLayout {
 					}
 				});
 
-				containerLinearLayout.addView(checkBoxes[0]);
+				checkBoxTextView.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View arg0) {
+						checkBoxes[0].performClick();
+					}
+				});
+				
+				if(direction == 0){
+					checkBoxLinearLayout.setGravity(Gravity.LEFT);
+					checkBoxLinearLayout.addView(checkBoxes[0]);
+					checkBoxLinearLayout.addView(checkBoxTextView);
+					checkBoxTextView.setGravity(Gravity.RIGHT);
+				}
+				else{
+					checkBoxLinearLayout.setGravity(Gravity.RIGHT);
+					checkBoxLinearLayout.addView(checkBoxTextView);
+					checkBoxLinearLayout.addView(checkBoxes[0]);
+					checkBoxTextView.setGravity(Gravity.LEFT);
+				}
+
+				containerLinearLayout.addView(checkBoxLinearLayout);
 
 				if (dividerBackgroundDrawable != null) {
 					divider = new View(context);
@@ -151,15 +191,25 @@ public class CheckedListBox extends LinearLayout {
 			}
 
 			for (int i = 0; i < listItems.length; i++) {
+				LinearLayout checkBoxLinearLayout = new LinearLayout(context);
+				checkBoxLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+				checkBoxLinearLayout.setLayoutParams(checkBoxLayoutParams);
+				
+				TextView checkBoxTextView = new TextView(context);
+				checkBoxTextView.setText(listItems[i].getText());
+				checkBoxTextView.setLayoutParams(textViewLayoutParams);
+				checkBoxTextView.setId(i);
+				
 				checkBoxes[startIndex + i] = new CheckBox(context);
 				checkBoxes[startIndex + i].setId(i);
-				checkBoxes[startIndex + i].setText(listItems[i].getText());
+				checkBoxes[startIndex + i].setText("");
 				checkBoxes[startIndex + i].setTag(listItems[i].getValue());
-				checkBoxes[startIndex + i].setLayoutParams(checkBoxLayoutParams);
 				checkBoxes[startIndex + i].setBackgroundDrawable(checkBoxBackgroundDrawable);
 
-				if (typeFace != null)
+				if (typeFace != null){
+					checkBoxTextView.setTypeface(typeFace);
 					checkBoxes[startIndex + i].setTypeface(typeFace);
+				}
 
 				checkBoxes[startIndex + i].setOnClickListener(new OnClickListener() {
 
@@ -170,7 +220,28 @@ public class CheckedListBox extends LinearLayout {
 					}
 				});
 
-				containerLinearLayout.addView(checkBoxes[startIndex + i]);
+				checkBoxTextView.setOnClickListener(new OnClickListener() {
+					
+					@Override
+					public void onClick(View view) {
+						checkBoxes[startIndex + view.getId()].performClick();
+					}
+				});
+				
+				if(direction == 0){
+					checkBoxLinearLayout.setGravity(Gravity.LEFT);
+					checkBoxLinearLayout.addView(checkBoxes[startIndex + i]);
+					checkBoxLinearLayout.addView(checkBoxTextView);
+					checkBoxTextView.setGravity(Gravity.RIGHT);
+				}
+				else{
+					checkBoxLinearLayout.setGravity(Gravity.RIGHT);
+					checkBoxLinearLayout.addView(checkBoxTextView);
+					checkBoxLinearLayout.addView(checkBoxes[startIndex + i]);
+					checkBoxTextView.setGravity(Gravity.LEFT);
+				}
+
+				containerLinearLayout.addView(checkBoxLinearLayout);
 
 				if (dividerBackgroundDrawable != null) {
 					divider = new View(context);
