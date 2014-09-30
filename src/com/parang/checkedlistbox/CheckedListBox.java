@@ -33,6 +33,7 @@ public class CheckedListBox extends LinearLayout {
 	private int titleTextColor;
 	private View titleDividerView;
 	private int direction;
+	private String allText;
 	
 	public CheckedListBox(Context context, AttributeSet attr) {
 		super(context, attr);
@@ -68,7 +69,9 @@ public class CheckedListBox extends LinearLayout {
 		else
 			direction = 0;
 		
-		textViewLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.WRAP_CONTENT, 1f);
+		allText = context.getString(R.string.All);
+		
+		textViewLayoutParams = new LinearLayout.LayoutParams(0, LayoutParams.MATCH_PARENT, 1f);
 		
 		checkBoxLayoutParams = new LayoutParams(checkBoxWidth, checkBoxHeight);
 		checkBoxLayoutParams.setMargins(checkBoxMarginLeft, checkBoxMarginTop, checkBoxMarginRight, checkBoxMarginBottom);
@@ -180,7 +183,7 @@ public class CheckedListBox extends LinearLayout {
 				checkBoxLinearLayout.setLayoutParams(checkBoxLayoutParams);
 				
 				TextView checkBoxTextView = new TextView(context);
-				checkBoxTextView.setText(context.getString(R.string.All));
+				checkBoxTextView.setText(allText);
 				checkBoxTextView.setLayoutParams(textViewLayoutParams);
 				
 				checkBoxes[0] = new CheckBox(context);
@@ -643,5 +646,13 @@ public class CheckedListBox extends LinearLayout {
 
 	public void setIconDrawable(Drawable iconDrawable) {
 		this.iconDrawable = iconDrawable;
+	}
+
+	public String getAllText() {
+		return allText;
+	}
+
+	public void setAllText(String allText) {
+		this.allText = allText;
 	}
 }
