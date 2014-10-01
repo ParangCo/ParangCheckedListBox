@@ -30,7 +30,7 @@ public class CheckedListBox extends LinearLayout {
 	private int titleWidth = LayoutParams.MATCH_PARENT, titleHeight = LayoutParams.WRAP_CONTENT, titleMarginLeft = 0, titleMarginTop = 0, titleMarginRight = 0, titleMarginBottom = 0;
 	private Drawable checkBoxBackgroundDrawable = null, dividerBackgroundDrawable = null, titleDividerBackgroundDrawable = null, titleBackgroundDrawable = null, expandDrawable, collapseDrawable, iconDrawable;
 	private LinearLayout.LayoutParams checkBoxLayoutParams, dividerLayoutParams, titleDividerLayoutParams, titleLayoutParams, textViewLayoutParams;
-	private int titleTextColor;
+	private int titleTextColor, textViewTextColor;
 	private View titleDividerView;
 	private int direction;
 	private String allText;
@@ -184,6 +184,7 @@ public class CheckedListBox extends LinearLayout {
 				
 				TextView checkBoxTextView = new TextView(context);
 				checkBoxTextView.setText(allText);
+				checkBoxTextView.setTextColor(textViewTextColor);
 				checkBoxTextView.setLayoutParams(textViewLayoutParams);
 				
 				checkBoxes[0] = new CheckBox(context);
@@ -216,13 +217,13 @@ public class CheckedListBox extends LinearLayout {
 					checkBoxLinearLayout.setGravity(Gravity.LEFT);
 					checkBoxLinearLayout.addView(checkBoxes[0]);
 					checkBoxLinearLayout.addView(checkBoxTextView);
-					checkBoxTextView.setGravity(Gravity.RIGHT);
+					checkBoxTextView.setGravity(Gravity.LEFT);
 				}
 				else{
 					checkBoxLinearLayout.setGravity(Gravity.RIGHT);
 					checkBoxLinearLayout.addView(checkBoxTextView);
 					checkBoxLinearLayout.addView(checkBoxes[0]);
-					checkBoxTextView.setGravity(Gravity.LEFT);
+					checkBoxTextView.setGravity(Gravity.RIGHT);
 				}
 
 				containerLinearLayout.addView(checkBoxLinearLayout);
@@ -242,6 +243,7 @@ public class CheckedListBox extends LinearLayout {
 				
 				TextView checkBoxTextView = new TextView(context);
 				checkBoxTextView.setText(listItems[i].getText());
+				checkBoxTextView.setTextColor(textViewTextColor);
 				checkBoxTextView.setLayoutParams(textViewLayoutParams);
 				checkBoxTextView.setId(i);
 				
@@ -277,13 +279,13 @@ public class CheckedListBox extends LinearLayout {
 					checkBoxLinearLayout.setGravity(Gravity.LEFT);
 					checkBoxLinearLayout.addView(checkBoxes[startIndex + i]);
 					checkBoxLinearLayout.addView(checkBoxTextView);
-					checkBoxTextView.setGravity(Gravity.RIGHT);
+					checkBoxTextView.setGravity(Gravity.LEFT);
 				}
 				else{
 					checkBoxLinearLayout.setGravity(Gravity.RIGHT);
 					checkBoxLinearLayout.addView(checkBoxTextView);
 					checkBoxLinearLayout.addView(checkBoxes[startIndex + i]);
-					checkBoxTextView.setGravity(Gravity.LEFT);
+					checkBoxTextView.setGravity(Gravity.RIGHT);
 				}
 
 				containerLinearLayout.addView(checkBoxLinearLayout);
@@ -654,5 +656,13 @@ public class CheckedListBox extends LinearLayout {
 
 	public void setAllText(String allText) {
 		this.allText = allText;
+	}
+
+	public int getTextViewTextColor() {
+		return textViewTextColor;
+	}
+
+	public void setTextViewTextColor(int textViewTextColor) {
+		this.textViewTextColor = textViewTextColor;
 	}
 }
